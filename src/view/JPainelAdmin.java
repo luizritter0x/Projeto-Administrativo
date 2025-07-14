@@ -328,8 +328,11 @@ public class JPainelAdmin extends javax.swing.JFrame {
     
     private void initAvisosPanel() {
     JPanel painelAvisos = new JPanel(new BorderLayout());
-    abasAdmin.addTab("Criar Aviso", painelAvisos);
+    abasAdmin.addTab("Gerenciar Avisos", painelAvisos);
 
+    controller.AvisoController avisoController = new controller.AvisoController();
+
+    // FORMULÁRIO PARA CRIAR AVISO
     JPanel formPanel = new JPanel(new GridBagLayout());
     GridBagConstraints gbc = new GridBagConstraints();
     gbc.insets = new Insets(5, 5, 5, 5);
@@ -364,14 +367,119 @@ public class JPainelAdmin extends javax.swing.JFrame {
     gbc.anchor = GridBagConstraints.CENTER;
     formPanel.add(btnSalvar, gbc);
 
-    painelAvisos.add(formPanel, BorderLayout.CENTER);
+    painelAvisos.add(formPanel, BorderLayout.NORTH);
 
+    // LISTA DE AVISOS
+    DefaultListModel<model.Aviso> modeloAvisos = new DefaultListModel<>();
+    JList<model.Aviso> listaAvisos = new JList<>(modeloAvisos);
+    listaAvisos.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
+    listaAvisos.setFont(new Font("Arial", Font.PLAIN, 14));
+    listaAvisos.setCellRenderer(new ListCellRenderer<model.Aviso>() {
+        @Override
+        public Component getListCellRendererComponent(
+                JList<? extends model.Aviso> list,
+                model.Aviso aviso,
+                int index,
+                boolean isSelected,
+                boolean cellHasFocus) {
+
+            JPanel panel = new JPanel(new BorderLayout());
+            panel.setBorder(BorderFactory.createCompoundBorder(
+                    BorderFactory.createLineBorder(Color.GRAY, 1),
+                    BorderFactory.createEmptyBorder(5, 5, 5, 5)
+            ));
+            panel.setBackground(isSelected ? new Color(220, 240, 255) : Color.WHITE);
+
+            JLabel lblTitulo = new JLabel(aviso.getTitulo());
+            lblTitulo.setFont(new Font("Arial", Font.BOLD, 15));
+
+            JLabel lblData = new JLabel(
+                    aviso.getDataPublicacao().format(java.time.format.DateTimeFormatter.ofPattern("dd/MM/yyyy HH:mm"))
+            );
+            lblData.setFont(new Font("Arial", Font.PLAIN, 12));
+            lblData.setForeground(Color.DARK_GRAY);
+
+            JTextArea lblMensagem = new JTextArea(aviso.getMensagem());
+            lblMensagem.setFont(new Font("Arial", Font.PLAIN, 13));
+            lblMensagem.setLineWrap(true);
+            lblMensagem.setWrapStyleWord(true);
+            lblMensagem.setEditable(false);
+            lblMensagem.setOpaque(false);
+
+            panel.add(lblTitulo, BorderLayout.NORTH);
+            panel.add(lblMensagem, BorderLayout.CENTER);
+            panel.add(lblData, BorderLayout.SOUTH);
+
+            return panel;
+        }
+    });
+
+    JScrollPane scrollAvisos = new JScrollPane(listaAvisos);
+    painelAvisos.add(scrollAvisos, BorderLayout.CENTER);
+
+    // POPUP MENU PARA EXCLUIR AVISO
+    JPopupMenu popupMenu = new JPopupMenu();
+    JMenuItem menuExcluir = new JMenuItem("Excluir Aviso");
+    popupMenu.add(menuExcluir);
+
+    listaAvisos.addMouseListener(new MouseAdapter() {
+        @Override
+        public void mousePressed(MouseEvent e) {
+            if (e.isPopupTrigger()) showPopup(e);
+        }
+
+        @Override
+        public void mouseReleased(MouseEvent e) {
+            if (e.isPopupTrigger()) showPopup(e);
+        }
+
+        private void showPopup(MouseEvent e) {
+            int row = listaAvisos.locationToIndex(e.getPoint());
+            if (row != -1) {
+                listaAvisos.setSelectedIndex(row);
+                popupMenu.show(e.getComponent(), e.getX(), e.getY());
+            }
+        }
+    });
+
+    menuExcluir.addActionListener(e -> {
+        model.Aviso aviso = listaAvisos.getSelectedValue();
+        if (aviso != null) {
+            int confirm = JOptionPane.showConfirmDialog(
+                    painelAvisos,
+                    "Deseja realmente excluir o aviso \"" + aviso.getTitulo() + "\"?",
+                    "Confirmar Exclusão",
+                    JOptionPane.YES_NO_OPTION
+            );
+            if (confirm == JOptionPane.YES_OPTION) {
+                avisoController.deletarAviso(aviso.getId());
+                modeloAvisos.removeElement(aviso);
+                JOptionPane.showMessageDialog(painelAvisos, "Aviso removido!");
+            }
+        }
+    });
+
+    // BOTÃO RECARREGAR
+    JButton btnCarregar = new JButton("Recarregar Avisos");
+    btnCarregar.addActionListener(e -> {
+        modeloAvisos.clear();
+        List<model.Aviso> avisos = avisoController.listarAvisos();
+        for (model.Aviso a : avisos) {
+            modeloAvisos.addElement(a);
+        }
+    });
+
+    JPanel painelSul = new JPanel(new FlowLayout(FlowLayout.RIGHT));
+    painelSul.add(btnCarregar);
+    painelAvisos.add(painelSul, BorderLayout.SOUTH);
+
+    // SALVAR AVISO
     btnSalvar.addActionListener(e -> {
         String titulo = tfTitulo.getText().trim();
         String mensagem = taMensagem.getText().trim();
 
         if (titulo.isEmpty() || mensagem.isEmpty()) {
-            JOptionPane.showMessageDialog(this, "Preencha todos os campos!");
+            JOptionPane.showMessageDialog(painelAvisos, "Preencha todos os campos!");
             return;
         }
 
@@ -380,13 +488,16 @@ public class JPainelAdmin extends javax.swing.JFrame {
         aviso.setMensagem(mensagem);
         aviso.setCriadoPor(adminUsuarioLogado);
 
-        controller.AvisoController avisoController = new controller.AvisoController();
         avisoController.salvarAviso(aviso);
 
-        JOptionPane.showMessageDialog(this, "Aviso salvo com sucesso!");
+        JOptionPane.showMessageDialog(painelAvisos, "Aviso salvo com sucesso!");
         tfTitulo.setText("");
         taMensagem.setText("");
+        btnCarregar.doClick();
     });
+
+    // Carrega avisos ao abrir
+    btnCarregar.doClick();
 }
 
 

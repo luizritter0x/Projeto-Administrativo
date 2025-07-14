@@ -31,13 +31,28 @@ public class AvisoDAO {
     }
 
     public void salvar(Aviso aviso) {
-        String sql = "INSERT INTO avisos (titulo, mensagem, criado_por) VALUES (?, ?, ?)";
+        String sql = "INSERT INTO avisos (titulo, mensagem, criado_por, data_publicacao) VALUES (?, ?, ?, NOW())";
         try (Connection conn = ConexaoDAO.getConnection();
              PreparedStatement stmt = conn.prepareStatement(sql)) {
+
             stmt.setString(1, aviso.getTitulo());
             stmt.setString(2, aviso.getMensagem());
             stmt.setString(3, aviso.getCriadoPor());
             stmt.executeUpdate();
+
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+    }
+
+    public void deletar(int id) {
+        String sql = "DELETE FROM avisos WHERE id = ?";
+        try (Connection conn = ConexaoDAO.getConnection();
+             PreparedStatement stmt = conn.prepareStatement(sql)) {
+
+            stmt.setInt(1, id);
+            stmt.executeUpdate();
+
         } catch (SQLException e) {
             e.printStackTrace();
         }

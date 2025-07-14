@@ -13,11 +13,15 @@ public class AvisoController {
         this.avisoDAO = new AvisoDAO();
     }
 
+    public List<Aviso> listarAvisos() {
+        return avisoDAO.listarTodos();
+    }
+
     public void salvarAviso(Aviso aviso) {
         avisoDAO.salvar(aviso);
     }
 
-    public List<Aviso> listarAvisos() {
-        return avisoDAO.listarTodos();
+    public void deletarAviso(int id) {
+        avisoDAO.deletar(id);
     }
 }
