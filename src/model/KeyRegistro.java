@@ -5,7 +5,7 @@ public class KeyRegistro {
     private String chave;
     private boolean usada;
 
-    public int getId() { return id; }
+    public int getId() { return id; }  //getters/setters
     public void setId(int id) { this.id = id; }
 
     public String getChave() { return chave; }

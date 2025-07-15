@@ -12,7 +12,7 @@ public class Chamado {
     private String usuario;
     private List<MensagemChamado> mensagens = new ArrayList<>();
 
-    public int getId() {
+    public int getId() {  //getters/setters
         return id;
     }
 

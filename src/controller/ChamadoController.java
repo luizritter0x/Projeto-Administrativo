@@ -10,18 +10,18 @@ import java.util.List;
 
 public class ChamadoController {
 
-    public boolean criarChamado(String assunto, String usuario, String mensagemInicial) {
+    public boolean criarChamado(String assunto, String usuario, String mensagemInicial) { //cria um novo chamado no banco de dados
         Connection conn = null;
         PreparedStatement stmtChamado = null;
         PreparedStatement stmtMensagem = null;
         ResultSet generatedKeys = null;
 
         try {
-            conn = ConexaoDAO.getConnection();
+            conn = ConexaoDAO.getConnection();  //abre conexao com o banco de dados
 
-            // Cria o chamado
+            // cria o chamado na tabela chamados
             String sqlChamado = "INSERT INTO chamados (titulo, descricao, status, usuario) VALUES (?, ?, ?, ?)";
-            stmtChamado = conn.prepareStatement(sqlChamado, Statement.RETURN_GENERATED_KEYS);
+            stmtChamado = conn.prepareStatement(sqlChamado, Statement.RETURN_GENERATED_KEYS);  //PreparedStatement para inserir chamado
             stmtChamado.setString(1, assunto);
             stmtChamado.setString(2, mensagemInicial);
             stmtChamado.setString(3, "Aberto");
@@ -32,7 +32,7 @@ public class ChamadoController {
             if (generatedKeys.next()) {
                 int chamadoId = generatedKeys.getInt(1);
 
-                // Cria mensagem inicial vinculada ao chamado
+                // cria mensagem inicial vinculada ao chamado
                 String sqlMensagem = "INSERT INTO mensagens_chamado (chamado_id, autor, texto, data_hora) VALUES (?, ?, ?, ?)";
                 stmtMensagem = conn.prepareStatement(sqlMensagem);
                 stmtMensagem.setInt(1, chamadoId);
@@ -50,8 +50,8 @@ public class ChamadoController {
             e.printStackTrace();
             return false;
         } finally {
-            try { if (generatedKeys != null) generatedKeys.close(); } catch (Exception ignored) {}
-            try { if (stmtChamado != null) stmtChamado.close(); } catch (Exception ignored) {}
+            try { if (generatedKeys != null) generatedKeys.close(); } catch (Exception ignored) {}  //servem para fechar conexões e evitar vazamento de recursos no banco
+            try { if (stmtChamado != null) stmtChamado.close(); } catch (Exception ignored) {}      //n é try-with-resources(onde ele fecha automaticamente e nao precisa do finally
             try { if (stmtMensagem != null) stmtMensagem.close(); } catch (Exception ignored) {}
             try { if (conn != null) conn.close(); } catch (Exception ignored) {}
         }
@@ -62,15 +62,15 @@ public class ChamadoController {
         Connection conn = null;
         PreparedStatement stmt = null;
         ResultSet rs = null;
-
-        try {
+        
+        try {       
             conn = ConexaoDAO.getConnection();
             String sql = "SELECT * FROM chamados WHERE usuario = ?";
             stmt = conn.prepareStatement(sql);
             stmt.setString(1, usuario);
             rs = stmt.executeQuery();
 
-            while (rs.next()) {
+            while (rs.next()) {  
                 Chamado c = new Chamado();
                 c.setId(rs.getInt("id"));
                 c.setTitulo(rs.getString("titulo"));
@@ -82,13 +82,15 @@ public class ChamadoController {
         } catch (SQLException e) {
             e.printStackTrace();
         } finally {
-            try { if (rs != null) rs.close(); } catch (Exception ignored) {}
+            try { if (rs != null) rs.close(); } catch (Exception ignored) {} //servem para fechar conexões e evitar vazamento de recursos no banco
             try { if (stmt != null) stmt.close(); } catch (Exception ignored) {}
             try { if (conn != null) conn.close(); } catch (Exception ignored) {}
         }
         return lista;
     }
 
+    //busca o chamado pelo id criado
+    
     public Chamado buscarChamadoPorId(int id) {
         Chamado chamado = null;
         Connection conn = null;
@@ -114,13 +116,15 @@ public class ChamadoController {
         } catch (SQLException e) {
             e.printStackTrace();
         } finally {
-            try { if (rs != null) rs.close(); } catch (Exception ignored) {}
+            try { if (rs != null) rs.close(); } catch (Exception ignored) {} //servem para fechar conexões e evitar vazamento de recursos no banco
             try { if (stmt != null) stmt.close(); } catch (Exception ignored) {}
             try { if (conn != null) conn.close(); } catch (Exception ignored) {}
         }
         return chamado;
     }
 
+    
+    // busca o chamado por msg especifica
     public List<MensagemChamado> buscarMensagensPorChamado(int chamadoId) {
         List<MensagemChamado> mensagens = new ArrayList<>();
         Connection conn = null;
@@ -145,7 +149,7 @@ public class ChamadoController {
         } catch (SQLException e) {
             e.printStackTrace();
         } finally {
-            try { if (rs != null) rs.close(); } catch (Exception ignored) {}
+            try { if (rs != null) rs.close(); } catch (Exception ignored) {} //servem para fechar conexões e evitar vazamento de recursos no banco
             try { if (stmt != null) stmt.close(); } catch (Exception ignored) {}
             try { if (conn != null) conn.close(); } catch (Exception ignored) {}
         }
@@ -165,7 +169,7 @@ public class ChamadoController {
             e.printStackTrace();
         }
 
-        // Salvar mensagens novas
+        // salvar mensagens novas
         for (MensagemChamado m : chamado.getMensagens()) {
             if (m.getId() == 0) {
                 String sql = "INSERT INTO mensagens_chamado (chamado_id, autor, texto, data_hora) VALUES (?, ?, ?, ?)";

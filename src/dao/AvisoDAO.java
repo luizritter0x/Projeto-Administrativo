@@ -7,7 +7,7 @@ import java.util.List;
 
 public class AvisoDAO {
 
-    public List<Aviso> listarTodos() {
+    public List<Aviso> listarTodos() {  //lista todos os avisos do banco de dados (obs: em ordem de data mais recente)
         List<Aviso> avisos = new ArrayList<>();
         String sql = "SELECT * FROM avisos ORDER BY data_publicacao DESC";
 
@@ -30,16 +30,14 @@ public class AvisoDAO {
         return avisos;
     }
 
-    public void salvar(Aviso aviso) {
-        String sql = "INSERT INTO avisos (titulo, mensagem, criado_por, data_publicacao) VALUES (?, ?, ?, NOW())";
+    public void salvar(Aviso aviso) {  //salva os avisos na db
+        String sql = "INSERT INTO avisos (titulo, mensagem, criado_por) VALUES (?, ?, ?)";
         try (Connection conn = ConexaoDAO.getConnection();
              PreparedStatement stmt = conn.prepareStatement(sql)) {
-
             stmt.setString(1, aviso.getTitulo());
             stmt.setString(2, aviso.getMensagem());
             stmt.setString(3, aviso.getCriadoPor());
             stmt.executeUpdate();
-
         } catch (SQLException e) {
             e.printStackTrace();
         }

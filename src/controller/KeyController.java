@@ -5,7 +5,7 @@ import model.KeyRegistro;
 import java.util.List;
 
 public class KeyController {
-    private KeyDAO keyDAO = new KeyDAO();
+    private KeyDAO keyDAO = new KeyDAO();  //metodos
 
     public boolean inserirKey(String chave) {
         return keyDAO.inserirKey(chave);

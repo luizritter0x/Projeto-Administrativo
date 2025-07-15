@@ -7,18 +7,18 @@ import java.util.List;
 
 public class AvisoController {
 
-    private AvisoDAO avisoDAO;
+    private AvisoDAO avisoDAO;   //construtores
 
     public AvisoController() {
-        this.avisoDAO = new AvisoDAO();
-    }
-
-    public List<Aviso> listarAvisos() {
-        return avisoDAO.listarTodos();
+        this.avisoDAO = new AvisoDAO();  
     }
 
     public void salvarAviso(Aviso aviso) {
         avisoDAO.salvar(aviso);
+    }
+
+    public List<Aviso> listarAvisos() {   //retorna a lista dos avisos
+        return avisoDAO.listarTodos();
     }
 
     public void deletarAviso(int id) {

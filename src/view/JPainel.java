@@ -8,6 +8,7 @@ import javax.swing.*;
 import java.awt.*;
 import java.util.logging.Logger;
 import java.io.*;
+import static javax.swing.WindowConstants.EXIT_ON_CLOSE;
 
 
 public class JPainel extends javax.swing.JFrame {
@@ -80,45 +81,45 @@ public class JPainel extends javax.swing.JFrame {
 
         JPanel painelRegistro = new JPanel(new GridBagLayout());
 
-tfNomeRegistro = new JTextField();
-tfNomeRegistro.setPreferredSize(new Dimension(120, 28));
+        tfNomeRegistro = new JTextField();
+        tfNomeRegistro.setPreferredSize(new Dimension(120, 28));
 
-tfUsuarioRegistro = new JTextField();
-tfUsuarioRegistro.setPreferredSize(new Dimension(120, 28));
+        tfUsuarioRegistro = new JTextField();
+        tfUsuarioRegistro.setPreferredSize(new Dimension(120, 28));
 
-pfSenhaRegistro = new JPasswordField();
-pfSenhaRegistro.setPreferredSize(new Dimension(120, 28));
+        pfSenhaRegistro = new JPasswordField();
+        pfSenhaRegistro.setPreferredSize(new Dimension(120, 28));
 
-tfChaveRegistro = new JTextField();
-tfChaveRegistro.setPreferredSize(new Dimension(120, 28));
-btnRegistrar = new JButton("Registrar");
+        tfChaveRegistro = new JTextField();
+        tfChaveRegistro.setPreferredSize(new Dimension(120, 28));
+        btnRegistrar = new JButton("Registrar");
 
-c = new GridBagConstraints();
-c.insets = new Insets(5,5,5,5);
-c.fill = GridBagConstraints.NONE;
+        c = new GridBagConstraints();
+        c.insets = new Insets(5,5,5,5);
+        c.fill = GridBagConstraints.NONE;
 
-c.gridx = 0; c.gridy = 0;
-painelRegistro.add(new JLabel("Nome:"), c);
-c.gridx = 1; c.gridy = 0;
-painelRegistro.add(tfNomeRegistro, c);
+        c.gridx = 0; c.gridy = 0;
+        painelRegistro.add(new JLabel("Nome:"), c);
+        c.gridx = 1; c.gridy = 0;
+        painelRegistro.add(tfNomeRegistro, c);
 
-c.gridx = 0; c.gridy = 1;
-painelRegistro.add(new JLabel("Usuário:"), c);
-c.gridx = 1; c.gridy = 1;
-painelRegistro.add(tfUsuarioRegistro, c);
+        c.gridx = 0; c.gridy = 1;
+        painelRegistro.add(new JLabel("Usuário:"), c);
+        c.gridx = 1; c.gridy = 1;
+        painelRegistro.add(tfUsuarioRegistro, c);
 
-c.gridx = 0; c.gridy = 2;
-painelRegistro.add(new JLabel("Senha:"), c);
-c.gridx = 1; c.gridy = 2;
-painelRegistro.add(pfSenhaRegistro, c);
+        c.gridx = 0; c.gridy = 2;
+        painelRegistro.add(new JLabel("Senha:"), c);
+        c.gridx = 1; c.gridy = 2;
+        painelRegistro.add(pfSenhaRegistro, c);
 
-c.gridx = 0; c.gridy = 3;
-painelRegistro.add(new JLabel("Key:"), c);
-c.gridx = 1; c.gridy = 3;
-painelRegistro.add(tfChaveRegistro, c);
+        c.gridx = 0; c.gridy = 3;
+        painelRegistro.add(new JLabel("Key:"), c);
+        c.gridx = 1; c.gridy = 3;
+        painelRegistro.add(tfChaveRegistro, c);
 
-c.gridx = 0; c.gridy = 4; c.gridwidth = 2;
-painelRegistro.add(btnRegistrar, c);
+        c.gridx = 0; c.gridy = 4; c.gridwidth = 2;
+        painelRegistro.add(btnRegistrar, c);
 
         btnRegistrar.addActionListener(e -> fazerRegistro());
 

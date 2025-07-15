@@ -7,7 +7,7 @@ public class Usuario {
     private String senha;
     private boolean isAdmin;
 
-    public int getId() { return id; }
+    public int getId() { return id; } //getters e setters
     public void setId(int id) { this.id = id; }
 
     public String getNome() { return nome; }

@@ -19,8 +19,6 @@ public class ConexaoDAO {
             throw new RuntimeException(e);
         }
     }
-
-    // SE QUISER manter compatibilidade
     public static Connection getConnection() {
         return new ConexaoDAO().conectaBD();
     }

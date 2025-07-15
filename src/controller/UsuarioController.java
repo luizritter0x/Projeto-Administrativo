@@ -5,7 +5,7 @@ import model.Usuario;
 import java.util.List;
 
 public class UsuarioController {
-    private UsuarioDAO usuarioDAO = new UsuarioDAO();
+    private UsuarioDAO usuarioDAO = new UsuarioDAO();       //metodos
 
     public boolean login(String usuario, String senha) {
         return usuarioDAO.autenticarUsuario(usuario, senha);

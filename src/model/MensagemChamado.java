@@ -1,14 +1,15 @@
 package model;
 
-import java.io.Serializable;
-import java.time.LocalDateTime;
+import java.io.Serializable; // (serialização)
+import java.time.LocalDateTime; //  data e hora
 
+// Classe que representa uma mensagem dentro de um chamado
 public class MensagemChamado implements Serializable {
 
-    private int id;
-    private String autor;
-    private String texto;
-    private LocalDateTime dataHora;
+    private int id; 
+    private String autor; 
+    private String texto; 
+    private LocalDateTime dataHora; 
 
     public MensagemChamado() {
     }
@@ -19,6 +20,7 @@ public class MensagemChamado implements Serializable {
         this.dataHora = dataHora;
     }
 
+    // getters/setters
     public int getId() {
         return id;
     }

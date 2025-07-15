@@ -36,7 +36,7 @@ public class TelaChamadosUsuario extends javax.swing.JFrame {
         setLocationRelativeTo(null);
         setLayout(new BorderLayout());
 
-        // Tabela
+        // tabela
         String[] colunas = {"ID", "Assunto", "Status"};
         tableModelChamados = new DefaultTableModel(colunas, 0) {
             @Override
@@ -48,7 +48,6 @@ public class TelaChamadosUsuario extends javax.swing.JFrame {
         JScrollPane scrollPane = new JScrollPane(tableChamados);
         add(scrollPane, BorderLayout.CENTER);
 
-        // Botões
         JButton btnNovoChamado = new JButton("Novo Chamado");
         JButton btnVoltar = new JButton("Voltar");
         btnVoltar.addActionListener(e -> {
@@ -108,7 +107,6 @@ public class TelaChamadosUsuario extends javax.swing.JFrame {
         JTextArea areaChat = new JTextArea();
         areaChat.setEditable(false);
 
-        // Exibir mensagens existentes
         List<MensagemChamado> mensagens = chamado.getMensagens();
         if (mensagens != null) {
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd/MM/yyyy HH:mm");
