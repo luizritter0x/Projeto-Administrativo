@@ -1,7 +1,3 @@
-/*
- * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
- * Click nbfs://nbhost/SystemFileSystem/Templates/GUIForms/JFrame.java to edit this template
- */
 package view;
 
 import controller.ChamadoController;
@@ -18,14 +14,14 @@ import java.time.format.DateTimeFormatter;
 import java.util.List;
 
 public class TelaChamadosUsuario extends javax.swing.JFrame {
-    
+
     private static final java.util.logging.Logger logger = java.util.logging.Logger.getLogger(TelaChamadosUsuario.class.getName());
 
     private String usuarioLogado;
     private ChamadoController chamadoController;
     private JTable tableChamados;
     private DefaultTableModel tableModelChamados;
-    
+
     public TelaChamadosUsuario(String usuarioLogado) {
         this.usuarioLogado = usuarioLogado;
         this.chamadoController = new ChamadoController();
@@ -36,12 +32,11 @@ public class TelaChamadosUsuario extends javax.swing.JFrame {
         setLocationRelativeTo(null);
         setLayout(new BorderLayout());
 
-        // tabela
         String[] colunas = {"ID", "Assunto", "Status"};
         tableModelChamados = new DefaultTableModel(colunas, 0) {
             @Override
             public boolean isCellEditable(int row, int column) {
-                return false;
+                return false; // impede edição direta na tabela
             }
         };
         tableChamados = new JTable(tableModelChamados);
@@ -50,15 +45,17 @@ public class TelaChamadosUsuario extends javax.swing.JFrame {
 
         JButton btnNovoChamado = new JButton("Novo Chamado");
         JButton btnVoltar = new JButton("Voltar");
+
         btnVoltar.addActionListener(e -> {
-        new JPainelUsuario(usuarioLogado).setVisible(true);
-        dispose();
-});
+            new JPainelUsuario(usuarioLogado).setVisible(true);
+            dispose();
+        });
 
         JPanel painelBotoes = new JPanel(new FlowLayout(FlowLayout.RIGHT));
         painelBotoes.add(btnNovoChamado);
         painelBotoes.add(btnVoltar);
-        add(painelBotoes, BorderLayout.SOUTH);  
+        add(painelBotoes, BorderLayout.SOUTH);
+
         btnNovoChamado.addActionListener(e -> criarNovoChamado());
 
         tableChamados.addMouseListener(new MouseAdapter() {
@@ -74,6 +71,7 @@ public class TelaChamadosUsuario extends javax.swing.JFrame {
     }
 
     private void criarNovoChamado() {
+        // aq pede a msg inicial
         String assunto = JOptionPane.showInputDialog(this, "Assunto do chamado:");
         if (assunto != null && !assunto.isBlank()) {
             String mensagem = JOptionPane.showInputDialog(this, "Mensagem inicial:");
@@ -88,6 +86,7 @@ public class TelaChamadosUsuario extends javax.swing.JFrame {
     private void abrirChamadoSelecionado() {
         int row = tableChamados.getSelectedRow();
         if (row != -1) {
+            //busca o id do usuario
             int id = (Integer) tableModelChamados.getValueAt(row, 0);
             Chamado chamado = chamadoController.buscarChamadoPorId(id);
             if (chamado != null) {
@@ -107,30 +106,41 @@ public class TelaChamadosUsuario extends javax.swing.JFrame {
         JTextArea areaChat = new JTextArea();
         areaChat.setEditable(false);
 
+        // carrega/atualiza todas as mensagens já existentes no chamado
         List<MensagemChamado> mensagens = chamado.getMensagens();
         if (mensagens != null) {
-        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd/MM/yyyy HH:mm");
+            DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd/MM/yyyy HH:mm");
             for (MensagemChamado m : mensagens) {
-        areaChat.append("[" + m.getDataHora().format(formatter) + "] " + m.getAutor() + ": " + m.getTexto() + "\n");
+                // formato de como aparece no "chat"
+                areaChat.append("[" + m.getDataHora().format(formatter) + "] "
+                        + m.getAutor() + ": " + m.getTexto() + "\n");
+            }
         }
-    }
 
         JTextField campoMensagem = new JTextField();
         JButton btnEnviar = new JButton("Enviar");
+
         btnEnviar.addActionListener(e -> {
-        String texto = campoMensagem.getText().trim();
-        if (!texto.isEmpty()) {
-        MensagemChamado novaMensagem = new MensagemChamado(usuarioLogado, texto, LocalDateTime.now());
-        chamado.addMensagem(novaMensagem);
-        chamadoController.salvarChamado(chamado);
+            String texto = campoMensagem.getText().trim();
+            if (!texto.isEmpty()) {
+                MensagemChamado novaMensagem = new MensagemChamado(
+                        usuarioLogado,
+                        texto,
+                        LocalDateTime.now()
+                );
 
-        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd/MM/yyyy HH:mm");
-        areaChat.append("[" + novaMensagem.getDataHora().format(formatter) + "] " + usuarioLogado + ": " + texto + "\n");
+                chamado.addMensagem(novaMensagem);
 
-        campoMensagem.setText("");
-        }
-    });
+                chamadoController.salvarChamado(chamado);
 
+                // atualiza o chat na tela
+                DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd/MM/yyyy HH:mm");
+                areaChat.append("[" + novaMensagem.getDataHora().format(formatter) + "] "
+                        + usuarioLogado + ": " + texto + "\n");
+
+                campoMensagem.setText("");
+            }
+        });
 
         JPanel painelEnvio = new JPanel(new BorderLayout());
         painelEnvio.add(campoMensagem, BorderLayout.CENTER);
@@ -143,11 +153,18 @@ public class TelaChamadosUsuario extends javax.swing.JFrame {
 
     private void carregarChamadosDoUsuario() {
         tableModelChamados.setRowCount(0);
+        //carrega todos os chamados
         List<Chamado> chamados = chamadoController.listarChamadosPorUsuario(usuarioLogado);
         for (Chamado c : chamados) {
-            tableModelChamados.addRow(new Object[]{c.getId(), c.getTitulo(), c.getStatus()});
+            tableModelChamados.addRow(new Object[]{
+                    c.getId(),
+                    c.getTitulo(),
+                    c.getStatus()
+            });
         }
     }
+
+
 
     /**
      * This method is called from within the constructor to initialize the form.

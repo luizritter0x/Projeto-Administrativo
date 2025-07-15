@@ -1,7 +1,3 @@
-/*
- * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
- * Click nbfs://nbhost/SystemFileSystem/Templates/GUIForms/JFrame.java to edit this template
- */
 package view;
 
 import controller.AvisoController;
@@ -12,23 +8,23 @@ import java.awt.*;
 import java.util.List;
 
 public class TelaAvisos extends javax.swing.JFrame {
-    
+
     private static final java.util.logging.Logger logger = java.util.logging.Logger.getLogger(TelaAvisos.class.getName());
     private AvisoController avisoController;
 
     private JTextArea areaAvisos;
     private String usuarioLogado;
-    
+
     private JList<Aviso> listaAvisos;
-    private DefaultListModel<Aviso> modeloAvisos;   
-    
+    private DefaultListModel<Aviso> modeloAvisos;
+
     public TelaAvisos(String usuarioLogado) {
-    initComponents(); 
-    avisoController = new AvisoController(); 
-    configurarLayout(); 
-    carregarAvisos(); 
+        initComponents(); 
+        avisoController = new AvisoController();
+        configurarLayout();
+        carregarAvisos();
     }
-    
+
     private void configurarLayout() {
         setTitle("Central de Avisos");
         setSize(500, 350);
@@ -39,52 +35,53 @@ public class TelaAvisos extends javax.swing.JFrame {
         listaAvisos = new JList<>(modeloAvisos);
         listaAvisos.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
         listaAvisos.setFont(new Font("Arial", Font.PLAIN, 14));
-        
-     listaAvisos.setCellRenderer(new ListCellRenderer<Aviso>() {
-    @Override
-    public Component getListCellRendererComponent(
-            JList<? extends Aviso> list,
-            Aviso aviso,
-            int index,
-            boolean isSelected,
-            boolean cellHasFocus) {
 
-        JPanel panel = new JPanel(new BorderLayout());
-        panel.setBorder(BorderFactory.createCompoundBorder(
-                BorderFactory.createLineBorder(Color.GRAY, 1),
-                BorderFactory.createEmptyBorder(5, 5, 5, 5)
-        ));
+        listaAvisos.setCellRenderer(new ListCellRenderer<Aviso>() {
+            @Override
+            public Component getListCellRendererComponent(
+                    JList<? extends Aviso> list,
+                    Aviso aviso,
+                    int index,
+                    boolean isSelected,
+                    boolean cellHasFocus) {
 
-        java.time.format.DateTimeFormatter fmt =
-                java.time.format.DateTimeFormatter.ofPattern("dd/MM/yyyy HH:mm");
+                JPanel panel = new JPanel(new BorderLayout());
+                panel.setBorder(BorderFactory.createCompoundBorder(
+                        BorderFactory.createLineBorder(Color.GRAY, 1),
+                        BorderFactory.createEmptyBorder(5, 5, 5, 5)
+                ));
 
-        JLabel lblTitulo = new JLabel(aviso.getTitulo());
-        lblTitulo.setFont(new Font("Arial", Font.BOLD, 14));
+                // formatação da data hora
+                java.time.format.DateTimeFormatter fmt =
+                        java.time.format.DateTimeFormatter.ofPattern("dd/MM/yyyy HH:mm");
 
-        JLabel lblData = new JLabel(aviso.getDataPublicacao().format(fmt));
-        lblData.setFont(new Font("Arial", Font.PLAIN, 12));
-        lblData.setForeground(Color.DARK_GRAY);
+                JLabel lblTitulo = new JLabel(aviso.getTitulo());
+                lblTitulo.setFont(new Font("Arial", Font.BOLD, 14));
 
-        JTextArea lblMensagem = new JTextArea(aviso.getMensagem());
-        lblMensagem.setFont(new Font("Arial", Font.PLAIN, 13));
-        lblMensagem.setLineWrap(true);
-        lblMensagem.setWrapStyleWord(true);
-        lblMensagem.setEditable(false);
-        lblMensagem.setOpaque(false);
+                JLabel lblData = new JLabel(aviso.getDataPublicacao().format(fmt));
+                lblData.setFont(new Font("Arial", Font.PLAIN, 12));
+                lblData.setForeground(Color.DARK_GRAY);
 
-        panel.add(lblTitulo, BorderLayout.NORTH);
-        panel.add(lblMensagem, BorderLayout.CENTER);
-        panel.add(lblData, BorderLayout.SOUTH);
+                JTextArea lblMensagem = new JTextArea(aviso.getMensagem());
+                lblMensagem.setFont(new Font("Arial", Font.PLAIN, 13));
+                lblMensagem.setLineWrap(true);
+                lblMensagem.setWrapStyleWord(true);
+                lblMensagem.setEditable(false);
+                lblMensagem.setOpaque(false);
 
-        if (isSelected) {
-            panel.setBackground(new Color(220, 240, 255));
-        } else {
-            panel.setBackground(Color.WHITE);
-        }
+                panel.add(lblTitulo, BorderLayout.NORTH);
+                panel.add(lblMensagem, BorderLayout.CENTER);
+                panel.add(lblData, BorderLayout.SOUTH);
 
-        return panel;
-    }
-});
+                if (isSelected) {
+                    panel.setBackground(new Color(220, 240, 255));
+                } else {
+                    panel.setBackground(Color.WHITE);
+                }
+
+                return panel;
+            }
+        });
 
         listaAvisos.addMouseListener(new java.awt.event.MouseAdapter() {
             public void mouseClicked(java.awt.event.MouseEvent evt) {
@@ -99,60 +96,65 @@ public class TelaAvisos extends javax.swing.JFrame {
 
         JScrollPane scroll = new JScrollPane(listaAvisos);
         getContentPane().add(scroll, BorderLayout.CENTER);
-        
+
         JButton btnVoltar = new JButton("Voltar");
-btnVoltar.addActionListener(e -> {
-    new JPainelUsuario(usuarioLogado).setVisible(true);
-    dispose();
-});
+        btnVoltar.addActionListener(e -> {
 
-JPanel painelBotoes = new JPanel(new FlowLayout(FlowLayout.RIGHT));
-painelBotoes.add(btnVoltar);
+            new JPainelUsuario(usuarioLogado).setVisible(true);
+            dispose();
+        });
 
-getContentPane().add(painelBotoes, BorderLayout.SOUTH);
+        JPanel painelBotoes = new JPanel(new FlowLayout(FlowLayout.RIGHT));
+        painelBotoes.add(btnVoltar);
 
+        getContentPane().add(painelBotoes, BorderLayout.SOUTH);
     }
 
     private void carregarAvisos() {
-    modeloAvisos.clear();
-    List<Aviso> avisos = avisoController.listarAvisos();
-    for (Aviso aviso : avisos) {
-        modeloAvisos.addElement(aviso);
+        modeloAvisos.clear();
+        // busca todos os avisos na db
+        List<Aviso> avisos = avisoController.listarAvisos();
+        for (Aviso aviso : avisos) {
+            modeloAvisos.addElement(aviso);
+        }
+        if (modeloAvisos.isEmpty()) {
+            JOptionPane.showMessageDialog(this, "Nenhum aviso disponível.", "Avisos", JOptionPane.INFORMATION_MESSAGE);
+        }
     }
-    if (modeloAvisos.isEmpty()) {
-        JOptionPane.showMessageDialog(this, "Nenhum aviso disponível.", "Avisos", JOptionPane.INFORMATION_MESSAGE);
-    }
-}
 
     private void abrirDetalhesAviso(Aviso aviso) {
-    JFrame detalhes = new JFrame("Aviso - " + aviso.getTitulo());
-    detalhes.setSize(500, 300);
-    detalhes.setLocationRelativeTo(this);
-    detalhes.setLayout(new BorderLayout());
+        JFrame detalhes = new JFrame("Aviso - " + aviso.getTitulo());
+        detalhes.setSize(500, 300);
+        detalhes.setLocationRelativeTo(this);
+        detalhes.setLayout(new BorderLayout());
 
-    JTextArea detalhesArea = new JTextArea();
-    detalhesArea.setEditable(false);
-    detalhesArea.setFont(new Font("Arial", Font.PLAIN, 14));
-    detalhesArea.setLineWrap(true);
-    detalhesArea.setWrapStyleWord(true);
+        JTextArea detalhesArea = new JTextArea();
+        detalhesArea.setEditable(false);
+        detalhesArea.setFont(new Font("Arial", Font.PLAIN, 14));
+        detalhesArea.setLineWrap(true);
+        detalhesArea.setWrapStyleWord(true);
+        //formatacao do horaro
+        java.time.format.DateTimeFormatter formatter =
+                java.time.format.DateTimeFormatter.ofPattern("dd/MM/yyyy HH:mm");
 
-    java.time.format.DateTimeFormatter formatter = java.time.format.DateTimeFormatter.ofPattern("dd/MM/yyyy HH:mm");
-    String dataFormatada = aviso.getDataPublicacao().format(formatter);
+        String dataFormatada = aviso.getDataPublicacao().format(formatter);
 
-    detalhesArea.setText(
-        "Título: " + aviso.getTitulo() + "\n\n" +
-        aviso.getMensagem() + "\n\n" +
-        "Publicado por: " + aviso.getCriadoPor() +
-        " em " + dataFormatada
-    );
+        detalhesArea.setText(
+                "Título: " + aviso.getTitulo() + "\n\n" +
+                        aviso.getMensagem() + "\n\n" +
+                        "Publicado por: " + aviso.getCriadoPor() +
+                        " em " + dataFormatada
+        );
 
-    JButton btnVoltar = new JButton("Voltar");
-    btnVoltar.addActionListener(e -> detalhes.dispose());
+        JButton btnVoltar = new JButton("Voltar");
+        btnVoltar.addActionListener(e -> detalhes.dispose());
 
-    detalhes.add(new JScrollPane(detalhesArea), BorderLayout.CENTER);
-    detalhes.add(btnVoltar, BorderLayout.SOUTH);
-    detalhes.setVisible(true);
-}
+        detalhes.add(new JScrollPane(detalhesArea), BorderLayout.CENTER);
+        detalhes.add(btnVoltar, BorderLayout.SOUTH);
+        detalhes.setVisible(true);
+    }
+
+
     
     /**
      * This method is called from within the constructor to initialize the form.
